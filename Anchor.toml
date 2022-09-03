@@ -1,8 +1,9 @@
 [features]
-seeds = false
+seeds = true
 skip-lint = false
+
 [programs.localnet]
-pda_payers = "Fg6PaFpoGXkYsidMpWTK6W2BeZ7FEfcYkg476zPFsLnS"
+pda_payers = "B7pJLjbKUJhgdDmadvDSjjRpdFV59mg3uJTohoW3hxe2"
 
 [registry]
 url = "https://api.apr.dev"

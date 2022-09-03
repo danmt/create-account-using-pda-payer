@@ -2,10 +2,10 @@ use anchor_lang::prelude::*;
 
 mod utils;
 
-declare_id!("EJQnbXhsLS92wsAXg1vPaZt88hfzmuhcqBVLQBn9h23x");
+declare_id!("B7pJLjbKUJhgdDmadvDSjjRpdFV59mg3uJTohoW3hxe2");
 
 #[program]
-pub mod disco {
+pub mod pda_payers {
     use super::*;
 
     pub fn create_fee_vault(ctx: Context<CreateFeeVault>, amount: u64) -> Result<()> {
@@ -53,12 +53,12 @@ pub mod disco {
 
         solana_program::program::invoke_signed(
             &solana_program::system_instruction::transfer(
-                &ctx.accounts.fee_vault.key(),
+                &ctx.accounts.fee_vault_wallet.key(),
                 &ctx.accounts.authority.key(),
                 amount,
             ),
             &[
-                ctx.accounts.fee_vault.to_account_info().clone(),
+                ctx.accounts.fee_vault_wallet.to_account_info().clone(),
                 ctx.accounts.authority.to_account_info().clone(),
                 ctx.accounts.system_program.to_account_info().clone(),
             ],
@@ -69,7 +69,7 @@ pub mod disco {
     }
 
     pub fn create_collaborator(ctx: Context<CreateCollaborator>) -> Result<()> {
-        let fee_vault_seeds = &[
+        let fee_vault_wallet_seeds = &[
             b"fee_vault_wallet".as_ref(),
             ctx.accounts.fee_vault.to_account_info().key.as_ref(),
             &[ctx.accounts.fee_vault.wallet_bump],
@@ -89,10 +89,10 @@ pub mod disco {
             anchor_lang::context::CpiContext::new_with_signer(
                 ctx.accounts.system_program.to_account_info(),
                 anchor_lang::system_program::CreateAccount {
-                    from: ctx.accounts.fee_vault.to_account_info().clone(),
+                    from: ctx.accounts.fee_vault_wallet.to_account_info().clone(),
                     to: ctx.accounts.collaborator.to_account_info().clone(),
                 },
-                &[&fee_vault_seeds[..], &collaborator_seeds[..]],
+                &[&fee_vault_wallet_seeds[..], &collaborator_seeds[..]],
             ),
             Rent::get()?.minimum_balance(Collaborator::SIZE),
             Collaborator::SIZE.try_into().unwrap(),
